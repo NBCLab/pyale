@@ -42,24 +42,24 @@ def round2(ndarray):
     return rounded.astype(int)
 
 
-def vox2mm(xyz, affine):
+def vox2mm(ijk, affine):
     """
     Convert matrix subscripts to coordinates.
-    From here: http://blog.chrisgorgolewski.org/2014/12/how-to-convert-\
-    between-voxel-and-mm.html
+    From here:
+    http://blog.chrisgorgolewski.org/2014/12/how-to-convert-between-voxel-and-mm.html
     """
-    coords = nib.affines.apply_affine(affine, xyz)
-    return coords
+    xyz = nib.affines.apply_affine(affine, ijk)
+    return xyz
 
 
-def mm2vox(coords, affine):
+def mm2vox(xyz, affine):
     """
     Convert coordinates to matrix subscripts.
-    From here: http://blog.chrisgorgolewski.org/2014/12/how-to-convert-\
-    between-voxel-and-mm.html
+    From here:
+    http://blog.chrisgorgolewski.org/2014/12/how-to-convert-between-voxel-and-mm.html
     """
-    xyz = nib.affines.apply_affine(npl.inv(affine), coords)
-    return xyz
+    ijk = nib.affines.apply_affine(npl.inv(affine), xyz)
+    return ijk
 
 
 def thresh_str(num):
@@ -299,4 +299,4 @@ def get_resource_path():
     Based on function by Yaroslav Halchenko used in Neurosynth Python package.
     """
     #return abspath(join(dirname(__file__), pardir, 'resources') + sep)
-    return abspath(join(dirname(__file__), 'MaskenEtc') + sep)
+    return abspath(join(dirname(__file__), 'resources') + sep)

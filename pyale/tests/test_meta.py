@@ -37,7 +37,7 @@ def test_ma_hists():
     code_dir = os.path.dirname(__file__)
     par_dir = os.path.dirname(code_dir)
     raw_file = os.path.join(code_dir, 'data/nat.txt')
-    template_file = os.path.join(par_dir, 'MaskenEtc/Grey10.nii')
+    template_file = os.path.join(par_dir, 'resources/Grey10.nii.gz')
     true_file = os.path.join(code_dir, 'data/nat_maHists.mat')
     true = sio.loadmat(true_file)['maHists']
 
@@ -94,7 +94,7 @@ def test_ale_values():
     code_dir = os.path.dirname(__file__)
     par_dir = os.path.dirname(code_dir)
     raw_file = os.path.join(code_dir, 'data/nat.txt')
-    template_file = os.path.join(par_dir, 'MaskenEtc/Grey10.nii')
+    template_file = os.path.join(par_dir, 'resources/Grey10.nii.gz')
     true_file = os.path.join(code_dir, 'data/nat_ALE.nii')
     true_header = nib.load(true_file)
     true = np.array(true_header.get_data())
@@ -127,7 +127,7 @@ def test_null_distribution():
     code_dir = os.path.dirname(__file__)
     par_dir = os.path.dirname(code_dir)
     raw_file = os.path.join(code_dir, 'data/nat.txt')
-    template_file = os.path.join(par_dir, 'MaskenEtc/Grey10.nii')
+    template_file = os.path.join(par_dir, 'resources/Grey10.nii.gz')
     true_file = os.path.join(code_dir, 'data/nat_nullDist.mat')
     true = np.squeeze(sio.loadmat(true_file)['cNULL'])
 
@@ -164,7 +164,7 @@ def test__ale_to_p():
     code_dir = os.path.dirname(__file__)
     par_dir = os.path.dirname(code_dir)
     raw_file = os.path.join(code_dir, 'data/nat.txt')
-    template_file = os.path.join(par_dir, 'MaskenEtc/Grey10.nii')
+    template_file = os.path.join(par_dir, 'resources/Grey10.nii.gz')
     true_file = os.path.join(code_dir, 'data/nat_z.nii')
     true_header = nib.load(true_file)
     true = true_header.get_data()
@@ -189,10 +189,9 @@ def test__ale_to_p():
     hist_bins = np.round(np.arange(0, max_poss_ale+0.001, 0.0001), 4)
 
     ale_values, null_distribution = _compute_ale(experiments, dims, shape,
-                                                prior, hist_bins)
+                                                 prior, hist_bins)
 
-    p_values, z_values = _ale_to_p(ale_values, hist_bins, prior,
-                                  null_distribution)
+    p_values, z_values = _ale_to_p(ale_values, hist_bins, null_distribution)
     info = nib.load(template_file)
     dims = info.shape
 

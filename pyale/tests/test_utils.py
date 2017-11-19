@@ -18,7 +18,7 @@ def test_kernel():
     """
     code_dir = os.path.dirname(__file__)
     par_dir = os.path.dirname(code_dir)
-    info = nib.load(os.path.join(par_dir, 'resources/ICBM152_2009c_2mm.nii.gz'))
+    info = nib.load(os.path.join(par_dir, 'resources/Grey10.nii.gz'))
 
     LV = sio.loadmat(os.path.join(code_dir, 'data/kernels.mat'))
     kernels = LV['kernels']
@@ -83,11 +83,10 @@ def test_vox2mm():
     par_dir = os.path.dirname(code_dir)
     test = np.array([[20, 20, 20],
                      [0, 0, 0]])
-    true = np.array([[-56.5, -92.5, -38.5],
-                     [-96.5, -132.5, -78.5]])
-    info = nib.load(os.path.join(par_dir, 'resources/ICBM152_2009c_2mm.nii.gz'))
+    true = np.array([[50., -86., -32.],
+                     [90., -126., -72.]])
+    info = nib.load(os.path.join(par_dir, 'resources/Grey10.nii.gz'))
     aff = info.affine
-    print np.all(vox2mm(test, aff)==true)
     assert np.all(vox2mm(test, aff)==true)
 
 
@@ -99,11 +98,10 @@ def test_mm2vox():
     par_dir = os.path.dirname(code_dir)
     test = np.array([[20, 20, 20],
                      [0, 0, 0]])
-    true = np.array([[58.25, 76.25, 49.25],
-                     [48.25, 66.25, 39.25]])
-    info = nib.load(os.path.join(par_dir, 'resources/ICBM152_2009c_2mm.nii.gz'))
+    true = np.array([[ 35.,  73.,  46.],
+                     [ 45.,  63.,  36.]])
+    info = nib.load(os.path.join(par_dir, 'resources/Grey10.nii.gz'))
     aff = info.affine
-    print np.all(mm2vox(test, aff)==true)
     assert np.all(mm2vox(test, aff)==true)
 
 
@@ -120,8 +118,8 @@ def test_read_nifti():
     """
     code_dir = os.path.dirname(__file__)
     par_dir = os.path.dirname(code_dir)
-    data, aff = read_nifti(os.path.join(par_dir, 'resources/ICBM152_2009c_2mm.nii.gz'))
-    assert data.shape == (97, 115, 97)
+    data, aff = read_nifti(os.path.join(par_dir, 'resources/Grey10.nii.gz'))
+    assert data.shape == (91, 109, 91)
 
 
 def test_save_nifti():
@@ -129,7 +127,7 @@ def test_save_nifti():
     """
     code_dir = os.path.dirname(__file__)
     par_dir = os.path.dirname(code_dir)
-    data, aff = read_nifti(os.path.join(par_dir, 'resources/ICBM152_2009c_2mm.nii.gz'))
+    data, aff = read_nifti(os.path.join(par_dir, 'resources/Grey10.nii.gz'))
     out_file = os.path.join(code_dir, 'data/test_saved.nii')
     save_nifti(data, out_file, aff)
     assert os.path.isfile(out_file)
