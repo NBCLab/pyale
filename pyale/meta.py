@@ -1,13 +1,9 @@
 # emacs: at the end of the file
 # ex: set sts=4 ts=4 sw=4 et:
 """
-- Create ALE image
-- Create null distribution
-- Convert ALE to Z/p
-- Voxel-level threshold image
-- Perform iterations for FWE correction
-- Cluster-extent threshold image
+ALE-related meta-analysis tools.
 
+TODO: Improve conventions.
 A few in-function suffix conventions:
 - _values: 1d array matching dimensions of prior (211590). Filled with
            meaningful values
@@ -16,7 +12,6 @@ A few in-function suffix conventions:
 - _matrix: 3d array matching dimensions of template image (91, 109, 91)
 - _mat: nd array *not* matching dimensions of template image
 - _arr: 1d array *not* matching dimensions of prior
-@author: salo
 """
 from __future__ import division, print_function
 import os
@@ -46,7 +41,15 @@ def ale(dataset, n_cores=1, voxel_thresh=0.001, clust_thresh=0.05,
         corr='FWE', n_iters=10000, verbose=True, plot_thresh=True, prefix='',
         template_file='Grey10.nii.gz'):
     """
-    Perform activation likelihood estimation[1]_ meta-analysis on dataset.
+    Perform activation likelihood estimation[1]_[2]_[3]_ meta-analysis on dataset.
+
+    General steps:
+    - Create ALE image
+    - Create null distribution
+    - Convert ALE to Z/p
+    - Voxel-level threshold image
+    - Perform iterations for FWE correction
+    - Cluster-extent threshold image
 
     Parameters
     ----------
@@ -77,10 +80,18 @@ def ale(dataset, n_cores=1, voxel_thresh=0.001, clust_thresh=0.05,
 
     References
     ----------
-    [1] Eickhoff, S. B., Bzdok, D., Laird, A. R., Kurth, F., & Fox, P. T.
-        (2012). Activation likelihood estimation meta-analysis revisited.
-        Neuroimage, 59(3), 2349-2361.
-
+    .. [1] Eickhoff, S. B., Laird, A. R., Grefkes, C., Wang, L. E.,
+           Zilles, K., & Fox, P. T. (2009). Coordinate-based activation likelihood
+           estimation meta-analysis of neuroimaging data: A random-effects
+           approach based on empirical estimates of spatial uncertainty.
+           Human brain mapping, 30(9), 2907-2926.
+    .. [2] Turkeltaub, P. E., Eickhoff, S. B., Laird, A. R., Fox, M.,
+           Wiener, M., & Fox, P. (2012). Minimizing within-experiment and
+           within-group effects in activation likelihood estimation
+           meta-analyses. Human brain mapping, 33(1), 1-13.
+    .. [3] Eickhoff, S. B., Bzdok, D., Laird, A. R., Kurth, F., & Fox, P. T.
+           (2012). Activation likelihood estimation meta-analysis revisited.
+           Neuroimage, 59(3), 2349-2361.
 
     """
     name = dataset.name
@@ -263,7 +274,7 @@ def scale(dataset, n_cores=1, voxel_thresh=0.001, n_iters=2500, verbose=True,
           prefix='', database_file='grey_matter_ijk.txt',
           template_file='Grey10.nii.gz'):
     """
-    Perform activation likelihood estimation[1]_ meta-analysis on dataset.
+    Perform specific coactivation likelihood estimation[1]_ meta-analysis on dataset.
 
     Parameters
     ----------
@@ -292,9 +303,10 @@ def scale(dataset, n_cores=1, voxel_thresh=0.001, n_iters=2500, verbose=True,
 
     References
     ----------
-    [1] Eickhoff, S. B., Bzdok, D., Laird, A. R., Kurth, F., & Fox, P. T.
-        (2012). Activation likelihood estimation meta-analysis revisited.
-        Neuroimage, 59(3), 2349-2361.
+    .. [1] Langner, R., Rottschy, C., Laird, A. R., Fox, P. T., &
+           Eickhoff, S. B. (2014). Meta-analytic connectivity modeling
+           revisited: controlling for activation base rates.
+           NeuroImage, 99, 559-570.
 
     """
     name = dataset.name
@@ -338,6 +350,12 @@ def scale(dataset, n_cores=1, voxel_thresh=0.001, n_iters=2500, verbose=True,
     database_ijk = np.loadtxt(database_file, dtype=int)
     if len(database_ijk.shape) != 2 or database_ijk.shape[-1] != 3:
         raise Exception('Database coordinates not in voxelsX3 shape.')
+    elif np.any(database_ijk < 0):
+        raise Exception('Negative value(s) detected. Database coordinates must '
+                        'be in matrix space.')
+    elif not np.all(np.equal(np.mod(database_ijk, 1), 0)):  # pylint: disable=no-member
+        raise Exception('Float(s) detected. Database coordinates must all be '
+                        'integers.')
 
     ale_values, _ = _compute_ale(experiments, dims, shape, prior)
 
