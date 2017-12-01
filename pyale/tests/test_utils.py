@@ -26,7 +26,7 @@ def test_kernel():
     # Assuming 5.7 mm ED between templates.
     uncertain_templates = (5.7/(2.*np.sqrt(2./np.pi)) * np.sqrt(8.*np.log(2.)))
 
-    ns = range(1, 201)  # Test across sample sizes 1-50.
+    ns = range(1, 51)  # Test across sample sizes 1-50.
     test_kernels = np.zeros((31, 31, 31, len(ns)))
     for i, n in enumerate(ns):
         data = np.zeros((31, 31, 31))

@@ -11,26 +11,6 @@ from pyale.dataset import import_sleuth
 from pyale.meta import _compute_ale, _ale_to_p
 
 
-def test_hist_bins():
-    """
-    """
-    code_dir = os.path.dirname(__file__)
-    raw_file = os.path.join(code_dir, 'data/nat.txt')
-    true_file = os.path.join(code_dir, 'data/nat_histBins.mat')
-    true = sio.loadmat(true_file)['histEdges'].squeeze()
-
-    dataset = import_sleuth(raw_file)
-    experiments = dataset.experiments
-
-    max_poss_ale = 1.
-    for exp in experiments:
-        max_poss_ale *= (1. - np.max(exp.kernel))
-
-    max_poss_ale = 1. - max_poss_ale
-    hist_bins = np.round(np.arange(0, max_poss_ale+0.001, 0.0001), 4)
-    assert np.array_equal(hist_bins, true)
-
-
 def test_ma_hists():
     """
     """
@@ -118,7 +98,7 @@ def test_ale_values():
     ale_matrix[prior] = ale_values
     ale_matrix = ale_matrix.reshape(dims)
 
-    assert np.array_equal(ale_matrix, true)
+    assert np.allclose(ale_matrix, true)
 
 
 def test_null_distribution():
@@ -129,7 +109,7 @@ def test_null_distribution():
     raw_file = os.path.join(code_dir, 'data/nat.txt')
     template_file = os.path.join(par_dir, 'resources/Grey10.nii.gz')
     true_file = os.path.join(code_dir, 'data/nat_nullDist.mat')
-    true = np.squeeze(sio.loadmat(true_file)['cNULL'])
+    true = np.squeeze(sio.loadmat(true_file)['nullDist'])
 
     dataset = import_sleuth(raw_file)
     experiments = dataset.experiments
