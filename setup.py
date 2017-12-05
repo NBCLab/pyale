@@ -18,7 +18,8 @@ extra_setuptools_args = dict(
 setup(
     name='pyale',
     version=__version__,
-    description='Python implementation of activation likelihood estimation',
+    description=('Python implementation of activation likelihood estimation. '
+                 'Supports algorithm version {0}'.format(__algorithm__)),
     maintainer='Taylor Salo',
     maintainer_email='tsalo006@fiu.edu',
     install_requires=requirements,
