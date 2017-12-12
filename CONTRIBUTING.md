@@ -14,12 +14,16 @@ The current list of labels are [here][link_labels] and include:
 
     If you feel that you can contribute to one of these issues, we especially encourage you to do so!
 
-* [![Bugs](https://img.shields.io/badge/-bugs-fc2929.svg)][link_bugs] *These issues point to problems in the project.*
+* [![Good First Issue](https://img.shields.io/badge/-good%20first%20issue-7057ff.svg)][link_goodfirstissue] *These issues contain a task that should be relatively easy to perform without a detailed knowledge of the codebase.*
+
+    If you are a newcomer to the project and feel that you can contribute to one of these issues, we encourage you to do so!
+
+* [![Bug](https://img.shields.io/badge/-bug-fc2929.svg)][link_bugs] *These issues point to problems in the project.*
 
     If you find new a bug, please give as much detail as possible in your issue, including steps to recreate the error.
     If you experience the same bug as one already listed, please add any additional information that you have as a comment.
 
-* [![Requests](https://img.shields.io/badge/-requests-fbca04.svg)][link_requests] *These issues are asking for new features to be added to the project.*
+* [![Request](https://img.shields.io/badge/-request-fbca04.svg)][link_requests] *These issues are asking for new features to be added to the project.*
 
     Please try to make sure that your requested feature is distinct from any others that have already been requested or implemented. If you find one that's similar but there are subtle differences please reference the other request in your issue.
 
@@ -75,6 +79,7 @@ You're awesome. :wave::smiley:
 
 [link_bugs]: https://github.com/NBCLab/pyale/labels/bug
 [link_helpwanted]: https://github.com/NBCLab/pyale/labels/help%20wanted
+[link_goodfirstissue]: https://github.com/NBCLab/pyale/labels/good%20first%20issue
 [link_requests]: https://github.com/NBCLab/pyale/labels/requests
 
 [link_pullrequest]: https://help.github.com/articles/creating-a-pull-request/
