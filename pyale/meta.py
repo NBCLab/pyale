@@ -24,7 +24,8 @@ from scipy import ndimage
 from scipy.special import ndtri
 
 from .due import due, Doi
-from .utils import round2, read_nifti, save_nifti, thresh_str, get_resource_path
+from .utils import (round2, read_nifti, save_nifti, thresh_str,
+                    get_resource_path, cite_mni152)
 
 
 @due.dcite(Doi('10.1002/hbm.20718'),
@@ -96,6 +97,10 @@ def ale(dataset, n_cores=1, voxel_thresh=0.001, clust_thresh=0.05,
     """
     name = dataset.name
     experiments = dataset.experiments
+
+    # Cite MNI152 paper if default template is used
+    if template_file == 'Grey10.nii.gz':
+        cite_mni152()
 
     # Check path for template file
     if not os.path.dirname(template_file):
@@ -311,6 +316,10 @@ def scale(dataset, n_cores=1, voxel_thresh=0.001, n_iters=2500, verbose=True,
     """
     name = dataset.name
     experiments = dataset.experiments
+
+    # Cite MNI152 paper if default template is used
+    if template_file == 'Grey10.nii.gz':
+        cite_mni152()
 
     # Check paths for input files
     if not os.path.dirname(template_file):

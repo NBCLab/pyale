@@ -15,7 +15,8 @@ import pandas as pd
 import nibabel as nib
 
 from .due import due, Doi
-from .utils import round2, mm2vox, tal2mni, get_kernel, get_resource_path
+from .utils import (round2, mm2vox, tal2mni, get_kernel, get_resource_path,
+                    cite_mni152)
 
 
 class Dataset(object):
@@ -71,6 +72,10 @@ def import_neurosynth(csv_file, sep='\t', template_file='Grey10.nii.gz'):
                  Generated Experiments will be automatically transformed to MNI
                  space.
     """
+    # Cite MNI152 paper if default template is used
+    if template_file == 'Grey10.nii.gz':
+        cite_mni152()
+
     # Check path for template file
     if not os.path.dirname(template_file):
         template_file = os.path.join(get_resource_path(), template_file)
@@ -126,6 +131,10 @@ def import_sleuth(text_file, template_file='Grey10.nii.gz'):
     """
     Read Sleuth output text file into Dataset and Experiments.
     """
+    # Cite MNI152 paper if default template is used
+    if template_file == 'Grey10.nii.gz':
+        cite_mni152()
+
     # Check path for template file
     if not os.path.dirname(template_file):
         template_file = os.path.join(get_resource_path(), template_file)

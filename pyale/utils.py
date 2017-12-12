@@ -292,6 +292,15 @@ def save_nifti(matrix, filename, affine):
     img.to_filename(filename)
 
 
+@due.dcite(Doi('10.1016/j.neuroimage.2010.07.033'),
+           description='Introduces the MNI152 template.')
+def cite_mni152():
+    """
+    Dummy function to cite MNI152 paper with duecredit.
+    """
+    pass
+
+
 def get_resource_path():
     """
     Returns the path to general resources, terminated with separator. Resources

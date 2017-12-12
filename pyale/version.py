@@ -4,4 +4,5 @@
 Specifies current version of ALE to be used by setup.py and __init__.py
 """
 
-__version__ = '3.1'
+__version__ = '0.0.1'
+__algorithm__ = '3.1'
