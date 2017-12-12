@@ -427,6 +427,25 @@ def scale(dataset, n_cores=1, voxel_thresh=0.001, n_iters=2500, verbose=True,
 def compute_ma(shape, ijk, kernel):
     """
     Generate modeled activation (MA) maps.
+    
+    Replaces the values around each focus in ijk with the experiment-specific kernel.
+    Takes the element-wise maximum when looping through foci, which accounts for foci
+    which are near to one another and may have overlapping kernels.
+    
+    Parameters
+    ----------
+    shape : tuple
+        Shape of brain image + buffer. Typically (91, 109, 91) + (30, 30, 30).
+    ijk : array-like
+        Indices of foci. Each row is a coordinate, with the three columns
+        corresponding to index in each of three dimensions.
+    kernel : array-like
+        3D array of smoothing kernel. Typically of shape (30, 30, 30).
+    
+    Returns
+    -------
+    ma_values : array-like
+        1d array of modeled activation values.
     """
     ma_values = np.zeros(shape)
     for j_peak in range(ijk.shape[0]):
@@ -438,6 +457,7 @@ def compute_ma(shape, ijk, kernel):
                                                                  k:k+31],
                                                        kernel)
 
+    # Reduce to original dimensions and convert to 1d.
     ma_values = ma_values[15:-15, 15:-15, 15:-15]
     ma_values = ma_values.ravel()
     return ma_values
