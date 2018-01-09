@@ -16,6 +16,7 @@ A few in-function suffix conventions:
 from __future__ import division, print_function
 import os
 import copy
+import numba
 from time import time
 import multiprocessing as mp
 
@@ -424,14 +425,15 @@ def scale(dataset, n_cores=1, voxel_thresh=0.001, n_iters=2500, verbose=True,
         print('File {0} saved.'.format(filename))
 
 
+@numba.jit("f4[:,:,:](f4[:],f4[:,:],f4[:,:,:])")
 def compute_ma(shape, ijk, kernel):
     """
     Generate modeled activation (MA) maps.
-    
+
     Replaces the values around each focus in ijk with the experiment-specific kernel.
     Takes the element-wise maximum when looping through foci, which accounts for foci
     which are near to one another and may have overlapping kernels.
-    
+
     Parameters
     ----------
     shape : tuple
@@ -441,26 +443,34 @@ def compute_ma(shape, ijk, kernel):
         corresponding to index in each of three dimensions.
     kernel : array-like
         3D array of smoothing kernel. Typically of shape (30, 30, 30).
-    
+
     Returns
     -------
     ma_values : array-like
         1d array of modeled activation values.
-    """
-    ma_values = np.zeros(shape)
-    for j_peak in range(ijk.shape[0]):
-        i = ijk[j_peak, 0]
-        j = ijk[j_peak, 1]
-        k = ijk[j_peak, 2]
-        ma_values[i:i+31, j:j+31, k:k+31] = np.maximum(ma_values[i:i+31,  # pylint: disable=no-member
-                                                                 j:j+31,
-                                                                 k:k+31],
-                                                       kernel)
 
-    # Reduce to original dimensions and convert to 1d.
-    ma_values = ma_values[15:-15, 15:-15, 15:-15]
-    ma_values = ma_values.ravel()
-    return ma_values
+    Notes
+    -----
+    - Cannot use nopython mode because it returns an array
+    - Don't try passing in and copying the zero array. Slows things down.
+    - Without numba, the for loop approach takes much, much, much longer.
+    - Keep the ravel out of the function. It counteracts the benefits of jit.
+    """
+    # Single pointless loop. Numba breaks without it.
+    for _ in [0]:
+        ma_values = np.zeros(shape)
+        for j_peak in range(ijk.shape[0]):
+            i = ijk[j_peak, 0]
+            j = ijk[j_peak, 1]
+            k = ijk[j_peak, 2]
+            for i_val in range(i, i+31):
+                for j_val in range(j, j+31):
+                    for k_val in range(k, k+31):
+                        orig_val = ma_values[i_val, j_val, k_val]
+                        kern_val = kernel[i_val-i, j_val-j, k_val-k]
+                        ma_values[i_val, j_val, k_val] = max(orig_val, kern_val)
+        ma_values = ma_values[15:-15, 15:-15, 15:-15]
+        return ma_values
 
 
 def _compute_ale(experiments, dims, shape, prior, hist_bins=None):
@@ -479,6 +489,7 @@ def _compute_ale(experiments, dims, shape, prior, hist_bins=None):
 
     for i, exp in enumerate(experiments):
         ma_values = compute_ma(shape, exp.ijk, exp.kernel)
+        ma_values = ma_values.ravel()
 
         # Remember that histogram uses bin edges (not centers), so it returns
         # a 1xhist_bins-1 array
